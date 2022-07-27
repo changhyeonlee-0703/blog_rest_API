@@ -22,7 +22,7 @@ router.get("/",async (req,res)=>{
             user : post.user,
             title : post.title,
             createdAt : post.createdAt
-        })),
+        })).reverse(),
     });
 });
 
@@ -49,11 +49,17 @@ router.put("/:_postId", async (req, res)=>{
     const postId= req.params._postId;
     const {password, title, content} = req.body;
 
-    const existsPost = await Posts.find({_id : postId});
-    if(existsPost.length){
-        await Posts.updateOne( {_id:postId},{$set : {password, title, content}} );
+    const [existsPost] = await Posts.find({_id : postId});
+    if(existsPost.password===password){
+        await Posts.updateOne( {_id:postId},{$set : {title, content}} );
+        res.json({message : "게시글을 수정하였습니다."});
+        return ;
     }
-    res.json({message : "게시글을 수정하였습니다."});
+    else {
+        res.json({message : "비밀번호가 일치하지 않습니다."});
+        return ;
+    }
+    
 });
 
 

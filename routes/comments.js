@@ -8,9 +8,15 @@ router.post("/:_postId", async (req, res)=>{
     const postId = req.params._postId;
     const {user, password, content}=req.body;
 
-    console.log(postId, typeof(postId));
-    const createdPost = await Comments.create({user, password, content, postId : postId, createdAt: new Date()});
-    res.status(201).json({message : "댓글을 생성하였습니다."});
+    if(content!==""){
+        const createdPost = await Comments.create({user, password, content, postId : postId, createdAt: new Date()});
+        res.status(201).json({message : "댓글을 생성하였습니다."});
+        return ;
+    }
+    else{
+        res.json({message : "댓글 내용을 입력해 주세요."})
+    }
+
 });
 
 
@@ -25,31 +31,37 @@ router.get("/:_postId", async (req, res)=>{
             user : comment.user,
             content : comment.content,
             createdAt : comment.createdAt
-        }))
+        })).reverse()
     });
 });
 
 
 // 댓글 수정
 router.put("/:_commentId", async (req, res)=>{
-    const {commentId}=req.params;
+    const commentId=req.params._commentId;
     const {password, content} = req.body;
 
-    const existsComment = await Comments.find({_id:commentId});
-    if(existsComment.length){
-        await Comments.updateOne( {_id:commentId},{$set : {password, content}} );
+    const [existsComment] = await Comments.find({_id:commentId});
+    if([existsComment].length && content!=="" && existsComment.password===password){
+        await Comments.updateOne( {_id:commentId},{$set : {content}} );
+        res.json({message : "댓글을 수정하였습니다."});
+        return ;
     }
-    res.json({message : "댓글을 수정하였습니다."});
+    else {
+        res.json({message : "비밀번호가 틀리거나 댓글 내용이 없습니다."});
+        return ;
+    }
+    
 });
 
 
 // 댓글 삭제
 router.delete("/:_commentId", async (req, res)=>{
-    const {commentId}=req.params;
+    const commentId=req.params._commentId;
     const {password}=req.body;
 
     const [existsComment] = await Comments.find({_id:commentId});
-    if(existsComment.password===password){
+    if([existsComment].length && existsComment.password===password){
         await Comments.deleteOne({_id:commentId});
         res.json({message : "게시글을 삭제하였습니다."});
         return ;
