@@ -31,7 +31,7 @@ router.get("/",async (req,res)=>{
 router.get("/:_postId", async (req, res)=>{
     const postId = req.params._postId;
 
-    const [post]=await Posts.find({postId:Number(postId)});
+    const [post]=await Posts.find({_id : postId});
     res.json({
         data : {
             postId : post._id,
