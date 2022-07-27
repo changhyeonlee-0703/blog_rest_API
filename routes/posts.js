@@ -9,7 +9,7 @@ const Posts=require("../schemas/post");
 router.post("/", async (req,res)=>{
     const {user, password, title, content}=req.body;
     const createdPost = await Posts.create({user, password, title, content, createdAt: new Date()});
-    res.json({message : "게시글을 생성하였습니다."});
+    res.status(201).json({message : "게시글을 생성하였습니다."});
 });
 
 

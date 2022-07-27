@@ -10,7 +10,7 @@ router.post("/:_postId", async (req, res)=>{
 
     console.log(postId, typeof(postId));
     const createdPost = await Comments.create({user, password, content, postId : postId, createdAt: new Date()});
-    res.json({message : "댓글을 생성하였습니다."});
+    res.status(201).json({message : "댓글을 생성하였습니다."});
 });
 
 
