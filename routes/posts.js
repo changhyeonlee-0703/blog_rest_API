@@ -96,8 +96,7 @@ router.delete("/:_postId", async (req, res)=>{
         return res.status(200).json({message : "게시글을 삭제하였습니다."});
     }
     else {
-        res.status(400).json({success:false, message : "비밀번호가 일치하지 않습니다."});
-        return ;
+        return res.status(400).json({success:false, message : "비밀번호가 일치하지 않습니다."}); 
     }
 });
 
